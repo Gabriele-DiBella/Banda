@@ -1,0 +1,1013 @@
+/* =============================================================
+ * Banda - style.css
+ * Stili globali: design token, reset, tipografia, layout,
+ * transizioni tra schermate e animazioni condivise.
+ * ============================================================= */
+
+/* -------------------------------------------------------------
+ * 1. Design token
+ * ----------------------------------------------------------- */
+:root {
+  /* Superfici */
+  --bg: #0e0e14;
+  --bg-elev: #16161f;
+  --bg-elev-2: #1e1e2a;
+  --surface: #1a1a24;
+  --surface-soft: rgba(255, 255, 255, 0.03);
+
+  /* Bordi */
+  --border: rgba(255, 255, 255, 0.08);
+  --border-strong: rgba(255, 255, 255, 0.16);
+
+  /* Testo */
+  --text: #f3f3f7;
+  --text-muted: #9b9baa;
+  --text-dim: #6c6c7a;
+
+  /* Accento unico (blu #005bae) e tinte dello stesso colore.
+     Il blu base risulta poco contrastato sul fondo scuro: per testi e
+     icone si usa la tinta chiara --accent-light. */
+  --accent: #005bae;
+  --accent-strong: #0a6fd0;
+  --accent-light: #66a9de;
+  --accent-soft: rgba(0, 91, 174, 0.26);
+  --accent-line: rgba(10, 111, 208, 0.5);
+  --accent-contrast: #ffffff;
+
+  /* Semantici */
+  --danger: #e0685f;
+  --danger-soft: rgba(224, 104, 95, 0.12);
+  --success: #5fbf8f;
+
+  /* Geometria */
+  --radius-sm: 10px;
+  --radius: 16px;
+  --radius-lg: 24px;
+  --radius-pill: 999px;
+
+  /* Ombre */
+  --shadow-sm: 0 4px 14px rgba(0, 0, 0, 0.3);
+  --shadow: 0 14px 42px rgba(0, 0, 0, 0.45);
+
+  /* Movimento */
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --dur: 280ms;
+  --dur-fast: 180ms;
+
+  /* Safe areas */
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+
+  color-scheme: dark;
+}
+
+/* -------------------------------------------------------------
+ * 2. Reset minimale
+ * ----------------------------------------------------------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  font-family: "Inter", "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--text);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+  background: none;
+  border: none;
+}
+
+svg {
+  display: block;
+}
+
+h1,
+h2,
+h3 {
+  line-height: 1.12;
+  letter-spacing: -0.02em;
+  font-weight: 650;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent-strong);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+/* -------------------------------------------------------------
+ * 3. Layout applicazione
+ * ----------------------------------------------------------- */
+.app {
+  position: relative;
+  width: 100%;
+  max-width: 560px;
+  height: 100dvh;
+  margin: 0 auto;
+  background: var(--bg);
+  overflow: hidden;
+}
+
+/* -------------------------------------------------------------
+ * 4. Schermate e transizioni
+ * ----------------------------------------------------------- */
+.screen {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(12px) scale(0.995);
+  transition: opacity var(--dur) var(--ease), transform var(--dur) var(--ease),
+    visibility 0s linear var(--dur);
+}
+
+.screen--active {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  transition: opacity var(--dur) var(--ease), transform var(--dur) var(--ease),
+    visibility 0s linear 0s;
+}
+
+/* La schermata principale non deve scalare (shell persistente) */
+#screen-main.screen {
+  transform: translateY(8px);
+}
+#screen-main.screen--active {
+  transform: none;
+}
+
+/* -------------------------------------------------------------
+ * 5. Splash
+ * ----------------------------------------------------------- */
+.screen--splash {
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(120% 80% at 50% 0%, #1b1b27 0%, var(--bg) 62%);
+}
+
+.splash {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  animation: fade-up 620ms var(--ease-out) both;
+}
+
+.splash__mark {
+  color: var(--accent-contrast);
+  width: 84px;
+  height: 84px;
+  display: grid;
+  place-items: center;
+  border-radius: 26px;
+  background: linear-gradient(140deg, var(--accent-strong), var(--accent));
+  box-shadow: var(--shadow-sm);
+  animation: mark-pop 700ms var(--ease-out) both, mark-glow 3.4s ease-in-out 700ms infinite;
+}
+
+.splash__name {
+  font-size: 1.45rem;
+  font-weight: 650;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text);
+}
+
+/* -------------------------------------------------------------
+ * 6. Animazioni condivise
+ * ----------------------------------------------------------- */
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes mark-pop {
+  0% {
+    opacity: 0;
+    transform: scale(0.82) rotate(-6deg);
+  }
+  100% {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes mark-glow {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(10, 111, 208, 0);
+  }
+  50% {
+    box-shadow: 0 0 34px 2px rgba(10, 111, 208, 0.3);
+  }
+}
+
+@keyframes scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes slide-in-right {
+  from {
+    opacity: 0;
+    transform: translateX(26px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes slide-in-left {
+  from {
+    opacity: 0;
+    transform: translateX(-26px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-5px); }
+  40% { transform: translateX(4px); }
+  60% { transform: translateX(-3px); }
+  80% { transform: translateX(2px); }
+}
+
+@keyframes pulse-soft {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.55; }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* -------------------------------------------------------------
+ * 7. Onboarding
+ * ----------------------------------------------------------- */
+#screen-onboarding {
+  padding: calc(var(--safe-top) + 20px) 22px calc(var(--safe-bottom) + 22px);
+  overflow-y: auto;
+}
+
+.onb__top {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 30px;
+}
+
+.progress {
+  position: relative;
+  height: 4px;
+  width: 100%;
+  border-radius: var(--radius-pill);
+  background: rgba(255, 255, 255, 0.07);
+  overflow: hidden;
+}
+
+.progress__bar {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 50%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--accent), var(--accent-strong));
+  transition: width var(--dur) var(--ease);
+}
+
+.onb__step-label {
+  font-size: 0.78rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+.onb__stage {
+  position: relative;
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.onb__panel {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  animation: slide-in-right 420ms var(--ease-out) both;
+}
+
+.onb__panel[hidden] {
+  display: none;
+}
+
+.onb__panel--enter-left {
+  animation: slide-in-left 420ms var(--ease-out) both;
+}
+
+.onb__title {
+  font-size: 2.1rem;
+  font-weight: 680;
+}
+
+.onb__text {
+  color: var(--text-muted);
+  font-size: 0.96rem;
+  max-width: 42ch;
+}
+
+.onb__actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 6px;
+}
+
+.onb__actions .btn--ghost {
+  flex: 0 0 auto;
+}
+
+.onb__actions .btn--primary {
+  flex: 1 1 auto;
+}
+
+/* -------------------------------------------------------------
+ * 8. Notification gate
+ * ----------------------------------------------------------- */
+#screen-notifications {
+  align-items: center;
+  justify-content: center;
+  padding: calc(var(--safe-top) + 26px) 24px calc(var(--safe-bottom) + 26px);
+}
+
+#screen-access {
+  align-items: center;
+  justify-content: center;
+  padding: calc(var(--safe-top) + 26px) 24px calc(var(--safe-bottom) + 26px);
+}
+
+.gate {
+  width: 100%;
+  max-width: 420px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 16px;
+  animation: fade-up 480ms var(--ease-out) both;
+}
+
+.gate__mark {
+  color: var(--accent-contrast);
+  width: 84px;
+  height: 84px;
+  display: grid;
+  place-items: center;
+  border-radius: 26px;
+  background: linear-gradient(140deg, var(--accent-strong), var(--accent));
+  box-shadow: var(--shadow-sm);
+  animation: mark-glow 3.2s ease-in-out infinite;
+}
+
+.gate__title {
+  font-size: 1.7rem;
+  font-weight: 660;
+}
+
+.gate__text {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  max-width: 40ch;
+}
+
+.gate__status {
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--surface-soft);
+  animation: scale-in var(--dur) var(--ease-out) both;
+}
+
+.gate__status-text {
+  font-size: 0.86rem;
+  color: var(--text-muted);
+}
+
+.gate__status--ok {
+  border-color: rgba(95, 191, 143, 0.55);
+  background: rgba(95, 191, 143, 0.12);
+}
+
+.gate__status--ok .gate__status-text {
+  color: var(--success);
+}
+
+.gate__status--warn {
+  border-color: rgba(102, 169, 222, 0.5);
+  background: rgba(102, 169, 222, 0.12);
+}
+
+.gate__status--warn .gate__status-text {
+  color: var(--accent-light);
+}
+
+.gate__status--error {
+  border-color: rgba(224, 104, 95, 0.55);
+  background: var(--danger-soft);
+}
+
+.gate__status--error .gate__status-text {
+  color: var(--danger);
+}
+
+.gate__hint {
+  font-size: 0.82rem;
+  color: var(--text-dim);
+  max-width: 40ch;
+}
+
+/* -------------------------------------------------------------
+ * 9. Main shell: topbar
+ * ----------------------------------------------------------- */
+#screen-main {
+  padding-top: var(--safe-top);
+}
+
+.topbar {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 16px 20px 14px;
+  border-bottom: 1px solid var(--border);
+  background: rgba(14, 14, 20, 0.82);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.topbar__identity {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.avatar {
+  flex: 0 0 auto;
+  width: 42px;
+  height: 42px;
+  border-radius: var(--radius-pill);
+  display: grid;
+  place-items: center;
+  font-size: 0.88rem;
+  font-weight: 650;
+  letter-spacing: 0.04em;
+  color: var(--accent-contrast);
+  background: linear-gradient(140deg, var(--accent-strong), var(--accent));
+  box-shadow: var(--shadow-sm);
+  transition: transform var(--dur) var(--ease);
+}
+
+.topbar__text {
+  min-width: 0;
+}
+
+.topbar__name {
+  font-weight: 600;
+  font-size: 0.98rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.topbar__role {
+  font-size: 0.78rem;
+  color: var(--text-dim);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* -------------------------------------------------------------
+ * 10. Main shell: viewport e viste
+ * ----------------------------------------------------------- */
+.viewport {
+  position: relative;
+  flex: 1 1 auto;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+.view {
+  display: none;
+  flex-direction: column;
+  gap: 20px;
+  padding: 22px 20px 28px;
+}
+
+.view--active {
+  display: flex;
+  animation: fade-up 360ms var(--ease-out) both;
+}
+
+.view__head {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.view__title {
+  font-size: 1.5rem;
+  font-weight: 660;
+}
+
+.view__text {
+  color: var(--text-muted);
+  font-size: 0.92rem;
+}
+
+.hero {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 22px 20px;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  background: linear-gradient(160deg, var(--bg-elev-2) 0%, var(--bg-elev) 70%);
+  box-shadow: var(--shadow-sm);
+}
+
+.hero__title {
+  font-size: 1.62rem;
+  font-weight: 670;
+}
+
+.hero__text {
+  color: var(--text-muted);
+  font-size: 0.92rem;
+  max-width: 44ch;
+}
+
+.eyebrow {
+  font-size: 0.76rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent-light);
+}
+
+.stat-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 16px 8px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--surface-soft);
+  transition: transform var(--dur-fast) var(--ease), border-color var(--dur-fast) var(--ease);
+}
+
+.stat:active {
+  transform: scale(0.97);
+  border-color: var(--border-strong);
+}
+
+.stat__value {
+  font-size: 1.3rem;
+  font-weight: 660;
+  color: var(--accent-light);
+}
+
+.stat__label {
+  font-size: 0.74rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 20px;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  background: var(--bg-elev);
+  box-shadow: var(--shadow-sm);
+}
+
+.panel__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.panel__title {
+  font-size: 1.06rem;
+  font-weight: 620;
+}
+
+.panel__text {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.badge {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 5px 10px;
+  border-radius: var(--radius-pill);
+  color: var(--accent-light);
+  background: var(--accent-soft);
+  border: 1px solid var(--accent-line);
+}
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 18px 16px;
+  border-radius: var(--radius);
+  border: 1px dashed var(--border-strong);
+  background: var(--surface-soft);
+}
+
+.empty__title {
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.empty__text {
+  color: var(--text-dim);
+  font-size: 0.86rem;
+}
+
+.placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 30px 22px;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  background:
+    radial-gradient(140% 120% at 0% 0%, rgba(10, 111, 208, 0.12) 0%, transparent 55%),
+    var(--bg-elev);
+  animation: fade-up 420ms var(--ease-out) both;
+}
+
+.placeholder__tag {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent-light);
+}
+
+.placeholder__title {
+  font-size: 1.12rem;
+  font-weight: 620;
+}
+
+.placeholder__text {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  max-width: 40ch;
+}
+
+.danger-zone {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 20px;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--danger-soft);
+  background: rgba(224, 104, 95, 0.04);
+}
+
+.danger-zone__title {
+  font-size: 0.95rem;
+  font-weight: 620;
+  color: var(--danger);
+}
+
+.danger-zone__text {
+  color: var(--text-muted);
+  font-size: 0.86rem;
+}
+
+/* -------------------------------------------------------------
+ * 11. Main shell: tabbar
+ * ----------------------------------------------------------- */
+.tabbar {
+  flex: 0 0 auto;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 4px;
+  padding: 8px 12px calc(var(--safe-bottom) + 10px);
+  border-top: 1px solid var(--border);
+  background: rgba(14, 14, 20, 0.9);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+/* Con l'utente amministratore compare la voce Presenze. */
+.tabbar--five {
+  grid-template-columns: repeat(5, 1fr);
+}
+
+.tab {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  padding: 9px 4px 7px;
+  border-radius: var(--radius-sm);
+  color: var(--text-dim);
+  font-size: 0.72rem;
+  letter-spacing: 0.02em;
+  transition: color var(--dur-fast) var(--ease), transform var(--dur-fast) var(--ease);
+}
+
+.tab svg {
+  transition: transform var(--dur) var(--ease);
+}
+
+.tab:active {
+  transform: scale(0.94);
+}
+
+.tab--active {
+  color: var(--accent-light);
+}
+
+.tab--active svg {
+  transform: translateY(-2px);
+}
+
+.tab::after {
+  content: "";
+  position: absolute;
+  top: -9px;
+  left: 50%;
+  width: 22px;
+  height: 3px;
+  border-radius: var(--radius-pill);
+  background: var(--accent-light);
+  transform: translateX(-50%) scaleX(0);
+  transition: transform var(--dur) var(--ease);
+}
+
+.tab--active::after {
+  transform: translateX(-50%) scaleX(1);
+}
+
+/* -------------------------------------------------------------
+ * 12. Viste a pannelli (navigazione a livelli)
+ * ----------------------------------------------------------- */
+.pane {
+  display: none;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.pane--active {
+  display: flex;
+  animation: fade-up 320ms var(--ease-out) both;
+}
+
+.field-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.field__hint {
+  font-size: 0.78rem;
+  color: var(--text-dim);
+}
+
+/* -------------------------------------------------------------
+ * 13. Liste e gruppi di eventi
+ * ----------------------------------------------------------- */
+.event-groups {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.event-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.event-group__label {
+  font-size: 0.76rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+.event-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.event-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--surface-soft);
+  color: var(--text);
+  text-align: left;
+  transition: transform var(--dur-fast) var(--ease), border-color var(--dur-fast) var(--ease);
+}
+
+.event-row:hover {
+  border-color: var(--accent-line);
+}
+
+.event-row--active {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.event-row:active {
+  transform: scale(0.985);
+}
+
+.event-row__text {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.event-row__title {
+  font-size: 0.92rem;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.event-row__meta {
+  font-size: 0.78rem;
+  color: var(--text-dim);
+}
+
+/* -------------------------------------------------------------
+ * 14. Dettaglio evento
+ * ----------------------------------------------------------- */
+.detail {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.detail__title {
+  font-size: 1.5rem;
+  font-weight: 670;
+}
+
+.detail__meta {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.detail__section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+
+.detail__section-title {
+  font-size: 0.76rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+.detail__text {
+  font-size: 0.92rem;
+  color: var(--text-muted);
+  white-space: pre-line;
+}
+
+.setlist {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-left: 20px;
+  font-size: 0.92rem;
+  color: var(--text-muted);
+}
+
+.detail__actions {
+  display: flex;
+  gap: 10px;
+}
+
+.detail__actions .btn {
+  flex: 1 1 0;
+}
+
+/* -------------------------------------------------------------
+ * 15. Utility
+ * ----------------------------------------------------------- */
+[hidden] {
+  display: none !important;
+}
+
+/* -------------------------------------------------------------
+ * 13. Riduzione del movimento
+ * ----------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+
+
+
+

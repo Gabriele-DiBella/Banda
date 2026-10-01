@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0e0e14" />
+  <meta name="description" content="App di gestione logistica per banda musicale: eventi, presenze e spartiti." />
+  <title>Banda</title>
+
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" type="image/png" href="assets/icons/icon-192.png" />
+  <link rel="apple-touch-icon" href="assets/icons/icon-192.png" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/components.css" />
+</head>
+<body>
+  <div id="app" class="app">
+
+    <!-- ============================================================= -->
+    <!-- SPLASH                                                        -->
+    <!-- ============================================================= -->
+    <section id="screen-splash" class="screen screen--active screen--splash" aria-hidden="false">
+      <div class="splash">
+        <div class="splash__mark" aria-hidden="true">
+          <svg viewBox="0 0 48 48" width="48" height="48" role="img">
+            <path d="M8 12h32M8 24h32M8 36h32" stroke="currentColor" stroke-width="3.2" stroke-linecap="round"/>
+            <circle cx="30" cy="30" r="6" fill="currentColor"/>
+            <path d="M36 30V14" stroke="currentColor" stroke-width="3.2" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <p class="splash__name">Banda</p>
+        <div class="loader loader--inline" aria-label="Caricamento in corso">
+          <span></span><span></span><span></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================= -->
+    <!-- ACCESSO RISERVATO (solo invito, Fase 6 / Step 2)              -->
+    <!-- ============================================================= -->
+    <section id="screen-access" class="screen" aria-hidden="true">
+      <div class="gate">
+        <div class="gate__mark" aria-hidden="true">
+          <svg viewBox="0 0 48 48" width="42" height="42" role="img">
+            <rect x="11" y="21" width="26" height="19" rx="3" stroke="currentColor"
+                  stroke-width="3" fill="none"/>
+            <path d="M17 21v-5a7 7 0 0 1 14 0v5" stroke="currentColor" stroke-width="3"
+                  fill="none" stroke-linecap="round"/>
+            <circle cx="24" cy="30" r="2.6" fill="currentColor"/>
+          </svg>
+        </div>
+        <h1 class="gate__title">Accesso riservato</h1>
+        <p class="gate__text">
+          L'app e riservata ai membri della banda: non e possibile
+          registrarsi autonomamente. Richiedi il link d'invito al tuo
+          amministratore e inserisci qui il codice che contiene.
+        </p>
+
+        <form class="form" id="access-form" novalidate>
+          <div class="field">
+            <label class="field__label" for="access-code">Codice invito</label>
+            <input class="field__input" id="access-code" type="text"
+                   autocomplete="off" placeholder="Es. BND-2026"
+                   maxlength="64" required />
+            <p class="field__error" data-error-for="access-code"></p>
+          </div>
+          <button class="btn btn--primary btn--block" type="submit" id="access-continue">
+            Continua
+          </button>
+        </form>
+
+        <p class="gate__hint" id="access-hint">
+          Il link d'invito precompila il codice automaticamente.
+        </p>
+      </div>
+    </section>
+
+    <!-- ============================================================= -->
+    <!-- ONBOARDING                                                    -->
+    <!-- ============================================================= -->
+    <section id="screen-onboarding" class="screen" aria-hidden="true">
+      <header class="onb__top">
+        <div class="progress" role="progressbar" aria-valuemin="1" aria-valuemax="2" aria-valuenow="1" id="onb-progress">
+          <span class="progress__bar" id="onb-progress-bar"></span>
+        </div>
+        <p class="onb__step-label" id="onb-step-label">Passo 1 di 2</p>
+      </header>
+
+      <div class="onb__stage" id="onb-stage">
+        <!-- STEP 1 : Identita -->
+        <div class="onb__panel" data-step="1">
+          <p class="eyebrow">Benvenuto</p>
+          <h1 class="onb__title">I tuoi dati</h1>
+          <p class="onb__text">
+            Inserisci il tuo nome e cognome. I dati restano salvati su questo
+            dispositivo e ti servono per presenze ed eventi.
+          </p>
+
+          <form class="form" id="onb-form-identity" novalidate autocomplete="on">
+            <div class="field">
+              <label class="field__label" for="onb-first-name">Nome</label>
+              <input class="field__input" id="onb-first-name" name="firstName"
+                     type="text" inputmode="text" autocomplete="given-name"
+                     placeholder="Es. Marco" maxlength="40" required />
+              <p class="field__error" data-error-for="onb-first-name"></p>
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="onb-last-name">Cognome</label>
+              <input class="field__input" id="onb-last-name" name="lastName"
+                     type="text" inputmode="text" autocomplete="family-name"
+                     placeholder="Es. Rossi" maxlength="40" required />
+              <p class="field__error" data-error-for="onb-last-name"></p>
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="onb-email">Email</label>
+              <input class="field__input" id="onb-email" name="email" type="email"
+                     inputmode="email" autocomplete="email"
+                     placeholder="Es. marco.rossi@email.it" maxlength="80" required />
+              <p class="field__error" data-error-for="onb-email"></p>
+              <p class="field__hint">
+                Il tuo identificativo univoco: serve a riconoscerti se usi
+                piu dispositivi e a distinguerti da omonimi.
+              </p>
+            </div>
+
+            <button class="btn btn--primary btn--block" type="submit" id="onb-identity-next">
+              Continua
+            </button>
+          </form>
+        </div>
+
+        <!-- STEP 2 : Strumenti -->
+        <div class="onb__panel onb__panel--leave" data-step="2" hidden>
+          <p class="eyebrow">Profilo musicale</p>
+          <h1 class="onb__title">I tuoi strumenti</h1>
+          <p class="onb__text">
+            Seleziona uno o piu strumenti. Potrai modificarli in qualsiasi
+            momento dalla sezione Profilo.
+          </p>
+
+          <div class="field">
+            <div class="chip-groups" id="onb-instruments"></div>
+            <p class="field__error" data-error-for="onb-instruments"></p>
+          </div>
+
+          <div class="onb__actions">
+            <button class="btn btn--ghost" type="button" id="onb-instruments-back">Indietro</button>
+            <button class="btn btn--primary" type="button" id="onb-instruments-confirm">Conferma</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================= -->
+    <!-- NOTIFICATION GATE (bloccante)                                 -->
+    <!-- ============================================================= -->
+    <section id="screen-notifications" class="screen" aria-hidden="true">
+      <div class="gate">
+        <div class="gate__mark" aria-hidden="true">
+          <svg viewBox="0 0 48 48" width="42" height="42" role="img">
+            <path d="M24 6a11 11 0 0 0-11 11v7l-3.4 5.1A1.4 1.4 0 0 0 10.8 31h26.4a1.4 1.4 0 0 0 1.2-2.9L35 24v-7A11 11 0 0 0 24 6Z" stroke="currentColor" stroke-width="3" stroke-linejoin="round" fill="none"/>
+            <path d="M19 35a5 5 0 0 0 10 0" stroke="currentColor" stroke-width="3" stroke-linecap="round" fill="none"/>
+          </svg>
+        </div>
+        <h1 class="gate__title">Attiva le notifiche</h1>
+        <p class="gate__text">
+          Le notifiche sono essenziali: ti avvisano quando viene pubblicato un
+          nuovo evento o una variazione in scaletta. Senza di esse resteresti
+          fuori dai giochi.
+        </p>
+
+        <div class="gate__status" id="gate-status" hidden>
+          <p class="gate__status-text" id="gate-status-text"></p>
+        </div>
+
+        <button class="btn btn--primary btn--block" type="button" id="gate-enable">
+          Attiva notifiche
+        </button>
+        <button class="btn btn--ghost btn--block" type="button" id="gate-continue" hidden>
+          Continua senza notifiche
+        </button>
+        <p class="gate__hint" id="gate-hint" hidden></p>
+      </div>
+    </section>
+
+    <!-- ============================================================= -->
+    <!-- MAIN SHELL                                                    -->
+    <!-- ============================================================= -->
+    <section id="screen-main" class="screen" aria-hidden="true">
+      <header class="topbar">
+        <div class="topbar__identity">
+          <div class="avatar" aria-hidden="true">
+            <span id="topbar-initials">--</span>
+          </div>
+          <div class="topbar__text">
+            <p class="topbar__name" id="topbar-name">Utente</p>
+            <p class="topbar__role" id="topbar-role">Membro</p>
+          </div>
+        </div>
+        <button class="icon-btn" type="button" id="btn-open-profile" aria-label="Apri profilo">
+          <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+            <circle cx="12" cy="8" r="3.6" fill="none" stroke="currentColor" stroke-width="2"/>
+            <path d="M4.5 20a7.5 7.5 0 0 1 15 0" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </header>
+
+      <!-- Banner persistente: permesso notifiche revocato (Fase 6) -->
+      <div class="notif-banner" id="notif-banner" role="status" hidden>
+        <p class="notif-banner__text" id="notif-banner-text"></p>
+        <button class="btn btn--primary btn--sm" type="button" id="notif-banner-fix">
+          Riattiva
+        </button>
+      </div>
+
+      <main class="viewport" id="viewport">
+        <!-- ---------- HOME ---------- -->
+        <div class="view view--active" data-view="home">
+          <div class="hero">
+            <p class="eyebrow" id="home-greeting">Ciao</p>
+            <h2 class="hero__title" id="home-title">Riepilogo della banda</h2>
+            <p class="hero__text">
+              Eventi, presenze e spartiti in un unico posto.
+            </p>
+          </div>
+
+          <div class="stat-row">
+            <div class="stat">
+              <span class="stat__value" id="stat-instruments">0</span>
+              <span class="stat__label">Strumenti</span>
+            </div>
+            <div class="stat">
+              <span class="stat__value" id="stat-events">0</span>
+              <span class="stat__label">Eventi</span>
+            </div>
+            <div class="stat">
+              <span class="stat__value" id="stat-notifications">Off</span>
+              <span class="stat__label">Notifiche</span>
+            </div>
+          </div>
+
+          <section class="panel">
+            <div class="panel__head">
+              <h3 class="panel__title">Prossimi eventi</h3>
+              <span class="badge" id="home-events-badge">0</span>
+            </div>
+            <div class="event-list" id="home-events"></div>
+            <div class="empty" id="home-events-empty">
+              <p class="empty__title">Nessun evento in programma</p>
+              <p class="empty__text">
+                Gli eventi pubblicati dall'amministratore compariranno qui.
+              </p>
+            </div>
+          </section>
+
+          <section class="panel" id="install-panel" hidden>
+            <div class="panel__head">
+              <h3 class="panel__title">Installa l'app</h3>
+              <span class="badge" id="install-badge">Consigliato</span>
+            </div>
+            <p class="panel__text" id="install-text"></p>
+            <button class="btn btn--primary btn--block" type="button" id="btn-install" hidden>
+              Installa sul dispositivo
+            </button>
+          </section>
+        </div>
+
+        <!-- ---------- EVENTI ---------- -->
+        <div class="view" data-view="events">
+          <!-- PANE: LISTA -->
+          <div class="pane pane--active" data-pane="list">
+            <div class="view__head">
+              <h2 class="view__title">Eventi</h2>
+              <p class="view__text">Calendario, scalette e conferma presenza.</p>
+            </div>
+
+            <button class="btn btn--primary btn--block" type="button" id="btn-new-event" hidden>
+              Nuovo evento
+            </button>
+
+            <div class="event-groups" id="events-list"></div>
+
+            <div class="empty" id="events-empty" hidden>
+              <p class="empty__title">Nessun evento in programma</p>
+              <p class="empty__text">
+                Gli eventi pubblicati dall'amministratore compariranno qui.
+              </p>
+            </div>
+          </div>
+          <!-- PANE: DETTAGLIO -->
+          <div class="pane" data-pane="detail" hidden>
+            <button class="link-back" type="button" id="btn-event-back">
+              <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+                <path d="M14.5 5.5 8 12l6.5 6.5" fill="none" stroke="currentColor"
+                      stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              <span>Eventi</span>
+            </button>
+
+            <div id="event-detail"></div>
+          </div>
+
+          <!-- PANE: FORM EVENTO (admin) -->
+          <div class="pane" data-pane="form" hidden>
+            <button class="link-back" type="button" id="btn-event-form-back">
+              <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+                <path d="M14.5 5.5 8 12l6.5 6.5" fill="none" stroke="currentColor"
+                      stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              <span>Eventi</span>
+            </button>
+
+            <h2 class="view__title" id="event-form-title">Nuovo evento</h2>
+
+            <form class="form" id="event-form" novalidate>
+              <div class="field">
+                <label class="field__label" for="event-title">Titolo</label>
+                <input class="field__input" id="event-title" type="text" maxlength="80"
+                       placeholder="Es. Concerto di Natale" required />
+                <p class="field__error" data-error-for="event-title"></p>
+              </div>
+
+              <div class="field-row">
+                <div class="field">
+                  <label class="field__label" for="event-date">Data</label>
+                  <input class="field__input" id="event-date" type="date" required />
+                  <p class="field__error" data-error-for="event-date"></p>
+                </div>
+
+                <div class="field">
+                  <label class="field__label" for="event-time">Ora</label>
+                  <input class="field__input" id="event-time" type="time" required />
+                  <p class="field__error" data-error-for="event-time"></p>
+                </div>
+              </div>
+
+              <div class="field">
+                <label class="field__label" for="event-location">Luogo</label>
+                <input class="field__input" id="event-location" type="text" maxlength="80"
+                       placeholder="Es. Piazza del Comune" />
+              </div>
+
+              <div class="field">
+                <label class="field__label" for="event-setlist">Scaletta</label>
+                <textarea class="field__input field__input--area" id="event-setlist" rows="5"
+                          placeholder="Un brano per riga"></textarea>
+              </div>
+
+              <div class="field">
+                <label class="field__label" for="event-notes">Note</label>
+                <textarea class="field__input field__input--area" id="event-notes" rows="3"
+                          placeholder="Ritrovo, divisa, indicazioni"></textarea>
+              </div>
+
+              <button class="btn btn--primary btn--block" type="submit" id="event-form-save">
+                Pubblica evento
+              </button>
+            </form>
+          </div>
+        </div>
+
+        <!-- ---------- SPARTITI (Fase 5) ---------- -->
+        <div class="view" data-view="scores">
+          <div class="view__head">
+            <h2 class="view__title">Spartiti</h2>
+            <p class="view__text">Archivio PDF organizzato per cartelle.</p>
+          </div>
+
+          <div class="scores-toolbar" id="scores-toolbar" hidden>
+            <button class="btn btn--ghost btn--sm" type="button" id="btn-new-folder">
+              Nuova cartella
+            </button>
+            <button class="btn btn--primary btn--sm" type="button" id="btn-upload-score">
+              Carica PDF
+            </button>
+            <input
+              type="file"
+              accept="application/pdf,.pdf"
+              id="score-file-input"
+              hidden />
+          </div>
+
+          <nav class="crumbs" id="scores-crumbs" aria-label="Percorso cartelle"></nav>
+
+          <div class="folder-grid" id="scores-folders" hidden></div>
+
+          <div class="file-list" id="scores-files" hidden></div>
+
+          <div class="empty" id="scores-empty" hidden>
+            <p class="empty__title" id="scores-empty-title">Archivio vuoto</p>
+            <p class="empty__text" id="scores-empty-text">
+              Gli spartiti pubblicati dall'amministratore compariranno qui.
+            </p>
+          </div>
+        </div>
+
+        <!-- ---------- PRESENZE (admin, Fase 4) ---------- -->
+        <div class="view" data-view="attendance">
+          <div class="view__head">
+            <h2 class="view__title">Presenze</h2>
+            <p class="view__text">Riepilogo delle risposte per ogni evento.</p>
+          </div>
+
+          <div class="event-list" id="attendance-events"></div>
+
+          <div class="empty" id="attendance-empty" hidden>
+            <p class="empty__title">Nessun evento da riepilogare</p>
+            <p class="empty__text">Pubblica un evento per vedere le risposte dei membri.</p>
+          </div>
+
+          <div id="attendance-panel"></div>
+
+          <section class="panel" id="attendance-demo" hidden>
+            <div class="panel__head">
+              <h3 class="panel__title">Dati dimostrativi</h3>
+              <span class="badge" id="attendance-demo-badge">Attivi</span>
+            </div>
+            <p class="panel__text">
+              Finche il backend non fornisce l'elenco dei membri, il riepilogo usa
+              un'anagrafica di esempio per rendere la dashboard esplorabile.
+            </p>
+            <button class="btn btn--ghost btn--block" type="button" id="btn-demo-toggle">
+              Rimuovi dati dimostrativi
+            </button>
+          </section>
+        </div>
+
+        <!-- ---------- PROFILO ---------- -->
+        <div class="view" data-view="profile">
+          <div class="view__head">
+            <h2 class="view__title">Profilo</h2>
+            <p class="view__text">Aggiorna i tuoi dati in qualsiasi momento.</p>
+          </div>
+
+          <form class="form" id="profile-form" novalidate>
+            <div class="field">
+              <label class="field__label" for="profile-first-name">Nome</label>
+              <input class="field__input" id="profile-first-name" type="text"
+                     autocomplete="given-name" maxlength="40" required />
+              <p class="field__error" data-error-for="profile-first-name"></p>
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="profile-last-name">Cognome</label>
+              <input class="field__input" id="profile-last-name" type="text"
+                     autocomplete="family-name" maxlength="40" required />
+              <p class="field__error" data-error-for="profile-last-name"></p>
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="profile-email">Email</label>
+              <input class="field__input" id="profile-email" type="email"
+                     inputmode="email" autocomplete="email" maxlength="80" required />
+              <p class="field__error" data-error-for="profile-email"></p>
+              <p class="field__hint">
+                Identificativo univoco dell'account (non puo creare ambiguita
+                con gli omonimi).
+              </p>
+            </div>
+
+            <div class="field">
+              <span class="field__label">Strumenti</span>
+              <div class="chip-groups" id="profile-instruments"></div>
+              <p class="field__error" data-error-for="profile-instruments"></p>
+            </div>
+
+            <div class="field">
+              <span class="field__label">Ruolo</span>
+              <div class="segmented" id="profile-role" role="radiogroup" aria-label="Ruolo">
+                <button class="segmented__item" type="button" data-role="user" role="radio" aria-checked="false">Membro</button>
+                <button class="segmented__item" type="button" data-role="admin" role="radio" aria-checked="false">Amministratore</button>
+              </div>
+              <p class="field__hint">
+                In produzione il ruolo viene assegnato dal backend. Qui puoi
+                cambiarlo per provare le funzioni di amministrazione.
+              </p>
+            </div>
+
+            <button class="btn btn--primary btn--block" type="submit" id="profile-save">
+              Salva modifiche
+            </button>
+          </form>
+
+          <button class="btn btn--ghost btn--block" type="button" id="btn-logout">
+            Esci dall'account
+          </button>
+
+          <div class="danger-zone">
+            <p class="danger-zone__title">Area dati</p>
+            <p class="danger-zone__text">
+              Rimuove profilo e preferenze salvate su questo dispositivo.
+            </p>
+            <button class="btn btn--danger btn--block" type="button" id="btn-reset-profile">
+              Azzera profilo
+            </button>
+          </div>
+        </div>
+      </main>
+
+      <nav class="tabbar" aria-label="Navigazione principale">
+        <button class="tab tab--active" type="button" data-tab="home">
+          <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+            <path d="M4 11.5 12 4l8 7.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M6.5 10.5V20h11v-9.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <span>Home</span>
+        </button>
+        <button class="tab" type="button" data-tab="events">
+          <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+            <rect x="4" y="5.5" width="16" height="14.5" rx="2.5" fill="none" stroke="currentColor" stroke-width="2"/>
+            <path d="M4 10h16M8.5 3.5v4M15.5 3.5v4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          <span>Eventi</span>
+        </button>
+        <button class="tab" type="button" data-tab="scores">
+          <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+            <path d="M6 3.5h8.5L19 8v12.5H6Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+            <path d="M14 3.5V8h4.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+            <path d="M9 13h6M9 16.5h4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          <span>Spartiti</span>
+        </button>
+        <button class="tab" type="button" data-tab="attendance" hidden>
+          <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+            <path d="M5 20v-8M12 20V4M19 20v-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          <span>Presenze</span>
+        </button>
+        <button class="tab" type="button" data-tab="profile">
+          <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+            <circle cx="12" cy="8" r="3.6" fill="none" stroke="currentColor" stroke-width="2"/>
+            <path d="M4.5 20a7.5 7.5 0 0 1 15 0" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          <span>Profilo</span>
+        </button>
+      </nav>
+    </section>
+  </div>
+
+  <!-- ============================================================= -->
+  <!-- MODALE DI CONFERMA                                            -->
+  <!-- ============================================================= -->
+  <div id="modal" class="modal" hidden>
+    <div class="modal__backdrop" data-modal-close="1"></div>
+    <div class="modal__card" role="dialog" aria-modal="true" aria-labelledby="modal-title" aria-describedby="modal-text">
+      <h3 class="modal__title" id="modal-title">Conferma</h3>
+      <p class="modal__text" id="modal-text"></p>
+      <div class="modal__actions">
+        <button class="btn btn--ghost" type="button" id="modal-cancel">Annulla</button>
+        <button class="btn btn--primary" type="button" id="modal-confirm">Conferma</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================= -->
+  <!-- OVERLAY LOADER + TOASTS                                       -->
+  <!-- ============================================================= -->
+  <div id="loader-overlay" class="loader-overlay" hidden>
+    <div class="loader" aria-hidden="true"><span></span><span></span><span></span></div>
+    <p class="loader-overlay__text" id="loader-text">Caricamento</p>
+  </div>
+
+  <div id="toast-container" class="toast-container" aria-live="polite" aria-atomic="false"></div>
+
+  <script src="js/ui.js"></script>
+  <script src="js/format.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/push-config.js"></script>
+  <script src="js/push-notifications.js"></script>
+  <script src="js/events.js"></script>
+  <script src="js/attendance.js"></script>
+  <script src="js/scores.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
+

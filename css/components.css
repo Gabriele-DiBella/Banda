@@ -1,0 +1,1106 @@
+/* =============================================================
+ * Banda - components.css
+ * Componenti riutilizzabili: bottoni, campi form, chip, loader,
+ * overlay e toast.
+ * ============================================================= */
+
+/* -------------------------------------------------------------
+ * 1. Bottoni
+ * ----------------------------------------------------------- */
+.btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 15px 22px;
+  border-radius: var(--radius);
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  border: 1px solid transparent;
+  overflow: hidden;
+  transition: transform var(--dur-fast) var(--ease), background var(--dur-fast) var(--ease),
+    box-shadow var(--dur) var(--ease), border-color var(--dur-fast) var(--ease),
+    opacity var(--dur-fast) var(--ease);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.btn::after {
+  /* riflesso animato al passaggio del mouse */
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, transparent 30%, rgba(255, 255, 255, 0.18) 50%, transparent 70%);
+  transform: translateX(-120%);
+  transition: transform 620ms var(--ease-out);
+  pointer-events: none;
+}
+
+.btn:hover::after {
+  transform: translateX(120%);
+}
+
+.btn:active {
+  transform: scale(0.975);
+}
+
+.btn--block {
+  width: 100%;
+}
+
+.btn--sm {
+  padding: 9px 14px;
+  font-size: 0.85rem;
+  border-radius: var(--radius-sm);
+}
+
+.btn--primary {
+  color: var(--accent-contrast);
+  background: linear-gradient(140deg, var(--accent-strong), var(--accent));
+  box-shadow: 0 10px 26px rgba(0, 91, 174, 0.36);
+}
+
+.btn--primary:hover {
+  box-shadow: 0 14px 34px rgba(0, 91, 174, 0.5);
+}
+
+.btn--ghost {
+  color: var(--text);
+  background: var(--surface-soft);
+  border-color: var(--border-strong);
+}
+
+.btn--ghost:hover {
+  background: var(--bg-elev-2);
+  border-color: var(--accent-line);
+}
+
+.btn--danger {
+  color: var(--danger);
+  background: var(--danger-soft);
+  border-color: rgba(224, 104, 95, 0.35);
+}
+
+.btn--danger:hover {
+  background: rgba(224, 104, 95, 0.2);
+}
+
+.btn[disabled] {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+/* Stato di caricamento del bottone */
+.btn.is-loading {
+  pointer-events: none;
+  color: transparent;
+}
+
+.btn.is-loading::before {
+  content: "";
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid currentColor;
+  border-top-color: transparent;
+  color: var(--accent-contrast);
+  animation: spin 720ms linear infinite;
+}
+
+.btn--ghost.is-loading::before,
+.btn--danger.is-loading::before {
+  color: var(--text);
+}
+
+/* -------------------------------------------------------------
+ * 2. Icon button
+ * ----------------------------------------------------------- */
+.icon-btn {
+  flex: 0 0 auto;
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  background: var(--surface-soft);
+  transition: transform var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease),
+    border-color var(--dur-fast) var(--ease), background var(--dur-fast) var(--ease);
+}
+
+.icon-btn:hover {
+  color: var(--accent-light);
+  border-color: var(--accent-line);
+  background: var(--accent-soft);
+}
+
+.icon-btn:active {
+  transform: scale(0.92);
+}
+
+/* -------------------------------------------------------------
+ * 3. Form e campi
+ * ----------------------------------------------------------- */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.field__label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.field__input {
+  width: 100%;
+  padding: 15px 16px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border-strong);
+  background: var(--surface-soft);
+  color: var(--text);
+  font-size: 1rem;
+  transition: border-color var(--dur-fast) var(--ease), background var(--dur-fast) var(--ease),
+    box-shadow var(--dur) var(--ease);
+}
+
+.field__input::placeholder {
+  color: var(--text-dim);
+}
+
+.field__input:hover {
+  border-color: rgba(255, 255, 255, 0.24);
+}
+
+.field__input:focus {
+  outline: none;
+  border-color: var(--accent-strong);
+  background: var(--bg-elev-2);
+  box-shadow: 0 0 0 4px var(--accent-soft);
+}
+
+.field__error {
+  min-height: 0;
+  font-size: 0.8rem;
+  color: var(--danger);
+  opacity: 0;
+  transform: translateY(-3px);
+  transition: opacity var(--dur-fast) var(--ease), transform var(--dur-fast) var(--ease);
+}
+
+.field__error.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+.field.has-error .field__input {
+  border-color: var(--danger);
+  box-shadow: 0 0 0 4px var(--danger-soft);
+  animation: shake 380ms var(--ease);
+}
+
+/* -------------------------------------------------------------
+ * 4. Chip (selezione strumenti)
+ * ----------------------------------------------------------- */
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 15px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--border-strong);
+  background: var(--surface-soft);
+  color: var(--text-muted);
+  font-size: 0.88rem;
+  font-weight: 500;
+  transition: transform var(--dur-fast) var(--ease), background var(--dur-fast) var(--ease),
+    color var(--dur-fast) var(--ease), border-color var(--dur-fast) var(--ease);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.chip:hover {
+  border-color: var(--accent-line);
+  color: var(--text);
+}
+
+.chip:active {
+  transform: scale(0.95);
+}
+
+.chip__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--text-dim);
+  transition: background var(--dur-fast) var(--ease), transform var(--dur-fast) var(--ease);
+}
+
+.chip--selected {
+  color: var(--accent-contrast);
+  background: linear-gradient(140deg, var(--accent-strong), var(--accent));
+  border-color: transparent;
+  animation: scale-in var(--dur) var(--ease-out) both;
+}
+
+.chip--selected .chip__dot {
+  background: var(--accent-contrast);
+  transform: scale(1.15);
+}
+
+.chip-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.chip-groups {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.chip-group__label {
+  font-size: 0.76rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+/* -------------------------------------------------------------
+ * 5. Loader inline
+ * ----------------------------------------------------------- */
+.loader {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.loader span {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--accent-light);
+  animation: loader-bounce 900ms var(--ease) infinite;
+}
+
+.loader span:nth-child(2) {
+  animation-delay: 140ms;
+}
+
+.loader span:nth-child(3) {
+  animation-delay: 280ms;
+}
+
+@keyframes loader-bounce {
+  0%, 100% {
+    transform: translateY(0);
+    opacity: 0.5;
+  }
+  40% {
+    transform: translateY(-7px);
+    opacity: 1;
+  }
+}
+
+/* -------------------------------------------------------------
+ * 6. Overlay loader a schermo intero
+ * ----------------------------------------------------------- */
+.loader-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  background: rgba(9, 9, 14, 0.72);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  animation: fade-in var(--dur-fast) var(--ease-out) both;
+}
+
+.loader-overlay__text {
+  font-size: 0.86rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+/* -------------------------------------------------------------
+ * 7. Toast
+ * ----------------------------------------------------------- */
+.toast-container {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: calc(var(--safe-bottom) + 96px);
+  z-index: 80;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 0 20px;
+  pointer-events: none;
+}
+
+.toast {
+  width: 100%;
+  max-width: 420px;
+  padding: 13px 16px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border-strong);
+  background: var(--bg-elev-2);
+  color: var(--text);
+  font-size: 0.9rem;
+  box-shadow: var(--shadow);
+  animation: toast-in 320ms var(--ease-out) both;
+  pointer-events: auto;
+}
+
+.toast--out {
+  animation: toast-out 260ms var(--ease) both;
+}
+
+.toast--success {
+  border-color: rgba(95, 191, 143, 0.4);
+}
+
+.toast--error {
+  border-color: rgba(224, 104, 95, 0.45);
+}
+
+.toast--info {
+  border-color: var(--accent-line);
+}
+
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes toast-out {
+  from {
+    opacity: 1;
+    transform: none;
+  }
+  to {
+    opacity: 0;
+    transform: translateY(10px) scale(0.98);
+  }
+}
+
+/* -------------------------------------------------------------
+ * 8. Modale di conferma
+ * ----------------------------------------------------------- */
+.modal {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 0;
+}
+
+.modal__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(6, 6, 10, 0.66);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  animation: fade-in var(--dur-fast) var(--ease-out) both;
+}
+
+.modal__card {
+  position: relative;
+  width: 100%;
+  max-width: 460px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 24px 22px calc(var(--safe-bottom) + 22px);
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  border: 1px solid var(--border);
+  border-bottom: none;
+  background: var(--bg-elev-2);
+  box-shadow: var(--shadow);
+  animation: modal-sheet-in 340ms var(--ease-out) both;
+}
+
+@media (min-width: 480px) {
+  .modal {
+    align-items: center;
+    padding: 24px;
+  }
+
+  .modal__card {
+    border-radius: var(--radius-lg);
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 24px;
+    animation: modal-pop-in 300ms var(--ease-out) both;
+  }
+}
+
+.modal__title {
+  font-size: 1.14rem;
+  font-weight: 640;
+}
+
+.modal__text {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.modal__actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 6px;
+}
+
+.modal__actions .btn {
+  flex: 1 1 0;
+}
+
+@keyframes modal-sheet-in {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes modal-pop-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* -------------------------------------------------------------
+ * 9. Card evento
+ * ----------------------------------------------------------- */
+.event-card {
+  width: 100%;
+  display: flex;
+  align-items: stretch;
+  gap: 14px;
+  padding: 14px;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  background: var(--bg-elev);
+  color: var(--text);
+  text-align: left;
+  box-shadow: var(--shadow-sm);
+  transition: transform var(--dur-fast) var(--ease), border-color var(--dur-fast) var(--ease),
+    background var(--dur-fast) var(--ease);
+}
+
+.event-card:hover {
+  border-color: var(--accent-line);
+  background: var(--bg-elev-2);
+}
+
+.event-card:active {
+  transform: scale(0.985);
+}
+
+.event-card__date {
+  flex: 0 0 auto;
+  width: 54px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--accent-line);
+  background: var(--accent-soft);
+  color: var(--accent-light);
+}
+
+.event-card__day {
+  font-size: 1.22rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.event-card__month {
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.event-card__body {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.event-card__title {
+  font-size: 1rem;
+  font-weight: 620;
+}
+
+.event-card__meta {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+.event-card__foot {
+  margin-top: 4px;
+}
+
+/* -------------------------------------------------------------
+ * 10. Badge di stato presenza
+ * ----------------------------------------------------------- */
+.status {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--border-strong);
+  background: var(--surface-soft);
+  color: var(--text-muted);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+.status--yes {
+  color: var(--success);
+  border-color: rgba(95, 191, 143, 0.4);
+  background: rgba(95, 191, 143, 0.1);
+}
+
+.status--no {
+  color: var(--danger);
+  border-color: rgba(224, 104, 95, 0.4);
+  background: var(--danger-soft);
+}
+
+/* -------------------------------------------------------------
+ * 11. Collegamento indietro
+ * ----------------------------------------------------------- */
+.link-back {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: -4px;
+  padding: 8px 12px 8px 8px;
+  border-radius: var(--radius-pill);
+  color: var(--accent-light);
+  font-size: 0.88rem;
+  font-weight: 600;
+  transition: background var(--dur-fast) var(--ease), transform var(--dur-fast) var(--ease);
+}
+
+.link-back:hover {
+  background: var(--accent-soft);
+}
+
+.link-back:active {
+  transform: translateX(-2px);
+}
+
+/* -------------------------------------------------------------
+ * 12. Selettore segmentato (ruolo)
+ * ----------------------------------------------------------- */
+.segmented {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  gap: 4px;
+  padding: 4px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border-strong);
+  background: var(--surface-soft);
+}
+
+.segmented__item {
+  padding: 12px 14px;
+  border-radius: var(--radius-sm);
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: color var(--dur-fast) var(--ease), background var(--dur-fast) var(--ease),
+    transform var(--dur-fast) var(--ease);
+}
+
+.segmented__item:hover {
+  color: var(--text);
+}
+
+.segmented__item:active {
+  transform: scale(0.97);
+}
+
+.segmented__item--active {
+  color: var(--accent-contrast);
+  background: linear-gradient(140deg, var(--accent-strong), var(--accent));
+  animation: scale-in var(--dur) var(--ease-out) both;
+}
+
+/* -------------------------------------------------------------
+ * 13. Bottoni di conferma presenza
+ * ----------------------------------------------------------- */
+.presence {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.presence__btn {
+  padding: 16px 14px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border-strong);
+  background: var(--surface-soft);
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  font-weight: 620;
+  transition: transform var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease),
+    border-color var(--dur-fast) var(--ease), background var(--dur-fast) var(--ease),
+    box-shadow var(--dur) var(--ease);
+}
+
+.presence__btn:hover {
+  color: var(--text);
+  border-color: rgba(255, 255, 255, 0.24);
+}
+
+.presence__btn:active {
+  transform: scale(0.96);
+}
+
+.presence__btn.is-yes {
+  color: #06251a;
+  background: linear-gradient(140deg, #7fd6ab, var(--success));
+  border-color: transparent;
+  box-shadow: 0 10px 24px rgba(95, 191, 143, 0.24);
+  animation: pop-in 260ms var(--ease-out) both;
+}
+
+.presence__btn.is-no {
+  color: #2a0d0a;
+  background: linear-gradient(140deg, #ea8b83, var(--danger));
+  border-color: transparent;
+  box-shadow: 0 10px 24px rgba(224, 104, 95, 0.24);
+  animation: pop-in 260ms var(--ease-out) both;
+}
+
+@keyframes pop-in {
+  0% {
+    transform: scale(0.94);
+  }
+  60% {
+    transform: scale(1.03);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* -------------------------------------------------------------
+ * 14. Area di testo multiriga
+ * ----------------------------------------------------------- */
+.field__input--area {
+  min-height: 96px;
+  resize: vertical;
+  line-height: 1.5;
+  font-family: inherit;
+}
+
+/* -------------------------------------------------------------
+ * 15. Riepilogo presenze (dashboard amministratore)
+ * ----------------------------------------------------------- */
+.status--count {
+  color: var(--accent-light);
+  border-color: var(--accent-line);
+  background: var(--accent-soft);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+}
+
+.counters {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.counter {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 14px 8px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--surface-soft);
+  transition: transform var(--dur-fast) var(--ease);
+}
+
+.counter:active {
+  transform: scale(0.98);
+}
+
+.counter__value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.counter__label {
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+.counter--yes .counter__value { color: var(--success); }
+.counter--no .counter__value { color: var(--danger); }
+.counter--pending .counter__value { color: var(--text-muted); }
+
+.cbar {
+  display: flex;
+  width: 100%;
+  height: 10px;
+  border-radius: var(--radius-pill);
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.cbar__part {
+  height: 100%;
+  animation: bar-grow 420ms var(--ease-out) both;
+  transition: width var(--dur) var(--ease);
+}
+
+.cbar__part--yes { background: linear-gradient(90deg, #7fd6ab, var(--success)); }
+.cbar__part--no { background: linear-gradient(90deg, #ea8b83, var(--danger)); }
+.cbar__part--pending { background: rgba(255, 255, 255, 0.18); }
+
+@keyframes bar-grow {
+  from {
+    transform: scaleX(0);
+    transform-origin: left center;
+  }
+  to {
+    transform: scaleX(1);
+    transform-origin: left center;
+  }
+}
+
+.member-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.member {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--surface-soft);
+  animation: fade-up 320ms var(--ease-out) both;
+}
+
+.member__dot {
+  flex: 0 0 auto;
+  width: 9px;
+  height: 9px;
+  margin-top: 6px;
+  border-radius: 50%;
+  background: var(--text-dim);
+}
+
+.member__dot--yes { background: var(--success); }
+.member__dot--no { background: var(--danger); }
+.member__dot--pending { background: var(--text-dim); }
+
+.member__text {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.member__name {
+  font-size: 0.94rem;
+  font-weight: 600;
+}
+
+.member__meta {
+  font-size: 0.8rem;
+  color: var(--text-dim);
+}
+
+.member__note {
+  margin-top: 4px;
+  font-size: 0.84rem;
+  color: var(--text-muted);
+  white-space: pre-line;
+}
+
+.member__tag {
+  flex: 0 0 auto;
+  align-self: center;
+  padding: 3px 9px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--accent-line);
+  background: var(--accent-soft);
+  color: var(--accent-light);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* -------------------------------------------------------------
+ * 16. Archivio spartiti (Fase 5)
+ * ----------------------------------------------------------- */
+.scores-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+/* Briciole di pane */
+.crumbs {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 16px;
+  font-size: 0.86rem;
+}
+
+.crumbs__item {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--text-dim);
+  font: inherit;
+  cursor: pointer;
+}
+
+.crumbs__item:hover {
+  color: var(--accent-light);
+}
+
+.crumbs__item--current {
+  color: var(--text);
+  font-weight: 600;
+  cursor: default;
+}
+
+.crumbs__item--current:hover {
+  color: var(--text);
+}
+
+
+/* -------------------------------------------------------------
+ * 17. Banner notifiche revocate (Fase 6)
+ * ----------------------------------------------------------- */
+.notif-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 16px;
+  border-bottom: 1px solid rgba(224, 104, 95, 0.35);
+  background: var(--danger-soft);
+}
+
+.notif-banner__text {
+  margin: 0;
+  font-size: 0.85rem;
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--danger);
+}
+
+.notif-banner .btn--sm {
+  flex: 0 0 auto;
+}
+
+.crumbs__sep {
+  color: var(--text-dim);
+}
+
+/* Griglia cartelle */
+.folder-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.folder-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+
+.folder-card__open {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.folder-card__icon {
+  flex: 0 0 auto;
+  color: var(--accent-light);
+}
+
+.folder-card__text {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.folder-card__name {
+  font-size: 0.95rem;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.folder-card__meta {
+  font-size: 0.78rem;
+  color: var(--text-dim);
+}
+
+.folder-card__tools {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+}
+
+/* Lista PDF */
+.file-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.file-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+
+.file-row__icon {
+  flex: 0 0 auto;
+  color: var(--accent-light);
+}
+
+.file-row__body {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.file-row__name {
+  font-size: 0.94rem;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.file-row__meta {
+  font-size: 0.78rem;
+  color: var(--text-dim);
+}
+
+.file-row__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  flex: 0 0 auto;
+}
+
+/* Creazione e rinomina inline */
+.folder-create,
+.rename-box {
+  padding: 14px;
+  border: 1px dashed var(--accent-line);
+  border-radius: var(--radius);
+  background: var(--accent-soft);
+}
+
+.folder-create {
+  grid-column: 1 / -1;
+}
+
+.folder-create .field,
+.rename-box .field {
+  margin-bottom: 0;
+}
+
+.folder-create__actions,
+.rename-box__actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+
